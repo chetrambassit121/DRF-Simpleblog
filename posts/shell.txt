@@ -9,3 +9,36 @@
 
 
 
+
+
+
+
+$ python manage.py shell
+Python 3.8.2 (tags/v3.8.2:7b3ab59, Feb 25 2020, 22:45:29) [MSC v.1916 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from posts.serializers import PostSerializer
+>>> from posts.serializers import PostSerializer
+>>> from posts.models import Post
+>>> from rest_framework.renderers import JSONRenderer
+>>> new_post=Post(title='title1',content='content1')
+>>> new_post.save()
+>>> serializer=PostSerializer(instance=new_post)
+>>> serializer
+PostSerializer(instance=<Post: title1>):
+    id = IntegerField(read_only=True)
+    title = CharField(max_length=50)
+    content = CharField()
+    created = DateTimeField(read_only=True)
+>>> serializer.data
+{'id': 3, 'title': 'title1', 'content': 'content1', 'created': '2022-06-19T02:52:46.360845Z'}
+>>> json_data=JSONRenderer().render(serializer.data)
+>>> json_data
+b'{"id":3,"title":"title1","content":"content1","created":"2022-06-19T02:52:46.360845Z"}'
+>>> import io
+>>> stream=io.BytesIO(json_data)
+>>> from rest_framework.parsers import JSONParser
+>>> dict_data=JSONParser().parse(stream)
+>>> dict_data
+{'id': 3, 'title': 'title1', 'content': 'content1', 'created': '2022-06-19T02:52:46.360845Z'}
+>>>
