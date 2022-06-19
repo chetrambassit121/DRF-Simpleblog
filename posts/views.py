@@ -19,28 +19,48 @@ def homepage(request:Request):
     response={'message':'Hello World'}
     return Response(data=response, status=status.HTTP_200_OK)
 
-@api_view(http_method_names=['GET', 'POST'])
-def list_posts(request:Request):
-    posts = Post.objects.all()
-    if request.method == 'POST':
-        data = request.data
-        serializer = PostSerializer(data=data)
+# @api_view(http_method_names=['GET', 'POST'])
+# def list_posts(request:Request):
+#     posts = Post.objects.all()
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = PostSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             response={
+#                 "message":"Post Created",
+#                 "data":serializer.data
+#             }
+#             return Response(data=response, status=status.HTTP_201_CREATED)
+#         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     serializer = PostSerializer(instance=posts, many=True)
+#     response = {
+#         "messages":"posts",
+#         "data":serializer.data
+#     }
+
+#     return Response(data=response, status=status.HTTP_200_OK)
+
+class PostListCreateView(APIView):
+    serializer_class = PostSerializer
+
+    """ a view for creating and listing posts """
+    def get(self, request:Request, *args, **kwargs):
+        posts = Post.objects.all()
+        serializer = self.serializer_class(instance=posts, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK) 
+
+    def post(self, request:Request, *args, **kwargs):
+        data = request.data 
+        serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
-            response={
-                "message":"Post Created",
+            response = {
+                "message":"Post Created!",
                 "data":serializer.data
             }
-            return Response(data=response, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = PostSerializer(instance=posts, many=True)
-    response = {
-        "messages":"posts",
-        "data":serializer.data
-    }
-
-    return Response(data=response, status=status.HTTP_200_OK)
+            return Response(data=response, status=status.HTTP_201_CREATED) 
 
 @api_view(http_method_names=['GET'])
 def post_detail(request:Request, post_id:int):
