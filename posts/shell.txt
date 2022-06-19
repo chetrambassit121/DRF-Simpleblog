@@ -1,0 +1,11 @@
+>>> from posts.models import Post
+>>> new_post = Post(title='title1',content='content1')
+>>> new_post.save()
+>>> new_post2 = Post(title='title2',content='content2')
+>>> new_post2.save()
+>>> Post.objects.all()
+<QuerySet [<Post: title1>, <Post: title2>]>
+
+
+
+
