@@ -69,7 +69,10 @@ def update_post(request:Request,post_id:int):
 
 @api_view(http_method_names=['DELETE'])
 def delete_post(request:Request,post_id:int):
-    pass 
+    post = get_object_or_404(Post, pk=post_id)
+    post.delete()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
