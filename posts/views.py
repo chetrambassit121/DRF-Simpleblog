@@ -14,6 +14,7 @@ from .models import Post
 from .serializers import PostSerializer
 from .permissions import ReadOnly, AuthorOrReadOnly
 from rest_framework.pagination import PageNumberPagination
+from drf_yasg.utils import swagger_auto_schema
 
 
 class CustomPaginator(PageNumberPagination):
@@ -55,9 +56,17 @@ class PostListCreateView(
         serializer.save(author=user)
         return super().perform_create(serializer)
 
+    @swagger_auto_schema(
+        operation_summary="List all Posts",
+        operation_description="Returns a list of all Posts"
+    )
     def get(self, request: Request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        operation_summary="Create a Post",
+        operation_description="This endpoint creates a Post"
+    )
     def post(self, request: Request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -72,12 +81,25 @@ class PostRetrieveUpdateDeleteView(
     queryset = Post.objects.all()
     permission_classes = [AuthorOrReadOnly]
 
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve a Post by id",
+        operation_description="Retrives a post by the id"
+    )
     def get(self, request: Request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        operation_summary="Updates",
+        operation_description="Updates a post by id"
+    )
     def put(self, request: Request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        operation_summary="Delete",
+        operation_description="Delete a Post"
+    )
     def delete(self, request: Request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
@@ -106,7 +128,10 @@ class ListPostsForAuthor(generics.GenericAPIView, mixins.ListModelMixin):
             return Post.objects.filter(author__username=username)
 
         return queryset
-
+    @swagger_auto_schema(
+        operation_summary="List Posts for an author (user)",
+        operation_description="lists posts for user/author"
+    )
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
